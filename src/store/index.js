@@ -37,9 +37,6 @@ const store = createStore({
       commit('SET_REMOVE_STATE', state)
     },
   },
-
-  getters: {
-  }
 });
 
 export default store;

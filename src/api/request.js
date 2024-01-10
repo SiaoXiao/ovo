@@ -14,7 +14,6 @@ export function requestService(config) {
       return config
     },
     (error) => {
-      console.log('攔截RequestError', error)
       return Promise.reject(error)
     }
   )
@@ -25,12 +24,10 @@ export function requestService(config) {
       if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response)
       } else {
-        console.log('response status is not 2xx')
         return Promise.reject(response)
       }
     },
     (error) => {
-      console.log('攔截ResponseError', error)
       return Promise.reject(error)
     }
   )

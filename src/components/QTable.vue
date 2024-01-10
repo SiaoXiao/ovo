@@ -2,39 +2,142 @@
   <q-table
     flat
     bordered
-    card-class="text-brown"
-    table-class="text-grey-8"
-    table-header-class="text-grey-1 bg-grey-6 tableColumns"
-    class="q-mt-sm shadow-3"
+    color="secondary"
+    table-header-class="tableColumns"
+    class="q-mt-md shadow-3"
     :columns="columns"
     :rows="rows"
+    :filter="filter"
     row-key="name"
     separator="cell"
     selection="multiple"
     v-model:selected="selected"
+    v-model:pagination="pagination"
     no-data-label="no data"
+    no-results-label="未找到符合的資料"
     :loading="loading"
   >
+    <!-- Search bar -->
+    <template v-slot:top>
+      <!-- fit row justify-between items-center -->
+      <div class="tableSearchWrap">
+        <div class="text-h6 text-bold title">員工基本資訊</div>
+        <div class="searchInputs">
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="搜尋"
+          >
+            <template v-slot:append>
+              <q-icon name="search"></q-icon>
+            </template>
+          </q-input>
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="ApiFilter"
+            placeholder="會員姓名搜尋"
+          >
+            <template v-slot:append>
+              <q-icon name="search"></q-icon>
+            </template>
+          </q-input>
+        </div>
+      </div>
+    </template>
+
+    <!-- Table data tip -->
     <template v-slot:body-cell="props">
       <q-td :props="props">
         <div v-ripple>
           {{ props.value }}
         </div>
-        <q-tooltip anchor="bottom middle" self="center middle">
+        <q-tooltip
+          anchor="bottom middle"
+          self="center middle"
+          class="bg-secondary text-body2"
+        >
           {{ props.value }}
         </q-tooltip>
       </q-td>
     </template>
-    <template v-slot:no-data="{ message }">
-      <div class="full-width row flex-center text-accent q-gutter-sm">
-        <span>{{ message }} </span>
+
+    <!-- 資料狀態處理 -->
+    <template v-slot:no-data="{ message, filter }">
+      <div class="full-width row justify-center items-center q-pa-xl">
+        <q-icon
+          v-if="!loading"
+          :name="filter ? 'search' : 'warning'"
+          :color="filter ? 'secondary' : 'warning'"
+          size="lg"
+        ></q-icon>
+        <span class="fontBase q-ml-sm">{{ message }} </span>
+      </div>
+    </template>
+
+    <template v-slot:bottom="scope">
+      <div class="row justify-center items-center">
+        <q-select
+          borderless
+          v-model="pagination.rowsPerPage"
+          :options="options"
+          label="每頁筆數"
+          class="tableSelect"
+          emit-value
+          map-options
+        ></q-select>
+        <q-btn
+          v-if="scope.pagesNumber > 2"
+          icon="first_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.firstPage"
+        ></q-btn>
+        <q-btn
+          icon="chevron_left"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.prevPage"
+        ></q-btn>
+        <span>{{
+          `第 ${scope.pagination.page} 頁，共 ${scope.pagesNumber} 頁`
+        }}</span>
+        <q-btn
+          icon="chevron_right"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.nextPage"
+        ></q-btn>
+        <q-btn
+          v-if="scope.pagesNumber > 2"
+          icon="last_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.lastPage"
+        ></q-btn>
+        <div>{{ `共 ${rows.length} 幾筆資料` }}</div>
       </div>
     </template>
   </q-table>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useStore } from "vuex";
 
 const props = defineProps({
@@ -42,28 +145,96 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-
   rows: {
     type: Array,
     default: () => [],
   },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const emit = defineEmits(["search"]);
+const options = [
+  { label: "5", value: 5 },
+  { label: "7", value: 7 },
+  { label: "10", value: 10 },
+  { label: "15", value: 15 },
+  { label: "20", value: 20 },
+  { label: "25", value: 25 },
+  { label: "50", value: 50 },
+  { label: "All", value: 0 },
+];
 const store = useStore();
-const loading = ref(false);
 const selected = ref([]);
+const filter = ref("");
+const ApiFilter = ref("");
+
+const pagination = ref({
+  descending: false,
+  page: 1,
+  rowsPerPage: 5,
+});
 
 // 監聽選取事件
 watch(selected, (newVla) => {
   store.dispatch("updateCount", newVla.length);
   store.dispatch("updateSelected", newVla);
 });
+
+watch(
+  () => props.rows,
+  () => {
+    store.dispatch("updateSelected", []);
+    selected.value = [];
+  }
+);
+
+watch(ApiFilter, (newVla) => {
+  emit("search", newVla);
+});
 </script>
 
 <style lang="scss" scoped>
+.tableSearchWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  @media (max-width: 640px) {
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    .searchInputs {
+      width: 100%;
+    }
+  }
+}
+
 :deep(.tableColumns) {
   th {
+    background-color: #2f4052;
+    color: #fff;
     letter-spacing: 0.025em;
     font-weight: bold;
+    .q-checkbox__inner {
+      color: #fff;
+    }
   }
+}
+
+:deep(.q-table) {
+  tbody {
+    tr {
+      color: #73879c;
+    }
+  }
+}
+:deep(.q-table__bottom) {
+  justify-content: end;
+}
+.tableSelect {
+  width: 150px;
 }
 </style>

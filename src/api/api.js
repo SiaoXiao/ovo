@@ -1,6 +1,6 @@
 import { requestService } from './request'
 
-// Get OTP碼
+// Get 取得員工基本資料
 export function apiGetMembers() {
   return requestService({
     url: '/members',
@@ -11,8 +11,7 @@ export function apiGetMembers() {
   })
 }
 
-/* 會員相關 */
-// Post 取得會員
+// Post 搜尋員工資料
 export function apiPostSearch(data) {
   return requestService({
     url: '/members/search',

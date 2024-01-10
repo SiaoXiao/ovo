@@ -1,5 +1,5 @@
 <template>
-  <router-view />
+  <RouterView />
   <QDialog />
 </template>
 
