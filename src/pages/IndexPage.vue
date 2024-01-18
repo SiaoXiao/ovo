@@ -3,8 +3,8 @@
     <div class="block-item">
       <div class="row justify-end items-center">
         <div class="TableOperate row no-wrap justify-start items-start">
-          <q-btn class="primaryBtn btn" label="新增" @click="handleAddMember" />
-          <q-btn class="btn" label="刪除" @click="handleOpenDialog" />
+          <q-btn class="primaryBtn btn" label="新增" @click="handleOpenDialog('add')" />
+          <q-btn class="btn" label="刪除" @click="handleOpenDialog('remove')" />
         </div>
       </div>
       <QTable :columns="state.columns" :rows="state.rows" :loading="loading" @search="handleSearch" />
@@ -88,20 +88,17 @@ const getMembersData = async () => {
 };
 
 // 呼叫 Dialog
-const handleOpenDialog = () => {
-  store.dispatch("handleOpenDialog", true);
+const handleOpenDialog = (type) => {
+  if(type === 'add') {
+    store.dispatch('handleOpenAddDialog', true)
+  } else if (type === 'remove') {
+    store.dispatch("handleOpenDialog", true);
+  }
 };
 
 // 新增員工資料
 const handleAddMember = () => {
-  const fakeData = {
-    name: `name${Math.floor(Math.random() * 90000) + 10000}`,
-    cellphone: "0912345678",
-    email: "email1@email.com",
-    gender: "女",
-    birthday: "1997-12-19T11:11:11.111Z",
-  };
-  state.rows.unshift(fakeData);
+  state.rows.unshift(store.state.memberData);
 };
 
 // 刪除
@@ -144,6 +141,16 @@ watch(
   (newVal) => {
     if (newVal) {
       handleDelete();
+    }
+  }
+);
+
+// 監聽新增
+watch(
+  () => store.state.add,
+  (newVal) => {
+    if (newVal) {
+      handleAddMember();
     }
   }
 );

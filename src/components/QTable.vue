@@ -22,29 +22,36 @@
       <!-- fit row justify-between items-center -->
       <div class="tableSearchWrap">
         <div class="text-h6 text-bold title">員工基本資訊</div>
-        <div class="searchInputs">
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="搜尋"
-          >
-            <template v-slot:append>
-              <q-icon name="search"></q-icon>
-            </template>
-          </q-input>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="ApiFilter"
-            placeholder="會員姓名搜尋"
-          >
-            <template v-slot:append>
-              <q-icon name="search"></q-icon>
-            </template>
-          </q-input>
+        <div class="searchWrap">
+          <div class="searchInputs">
+            <q-input
+              borderless
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="搜尋"
+            >
+              <template v-slot:append>
+                <q-icon name="search"></q-icon>
+              </template>
+            </q-input>
+            <q-input
+              borderless
+              dense
+              debounce="300"
+              v-model="ApiFilter"
+              placeholder="會員姓名搜尋"
+            >
+              <template v-slot:append>
+                <q-icon name="search"></q-icon>
+              </template>
+            </q-input>
+          </div>
+          <q-btn
+            class="primaryBtn btn"
+            label="清除"
+            @click="handelResetInput"
+          />
         </div>
       </div>
     </template>
@@ -74,10 +81,11 @@
           :color="filter ? 'secondary' : 'warning'"
           size="lg"
         ></q-icon>
-        <span class="fontBase q-ml-sm">{{ message }} </span>
+        <span class="text-caption q-ml-sm">{{ message }}</span>
       </div>
     </template>
 
+    <!-- table bottom -->
     <template v-slot:bottom="scope">
       <div class="row justify-center items-center">
         <q-select
@@ -137,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useStore } from "vuex";
 
 const props = defineProps({
@@ -177,6 +185,11 @@ const pagination = ref({
   rowsPerPage: 5,
 });
 
+const handelResetInput = () => {
+  filter.value = "";
+  ApiFilter.value = "";
+};
+
 // 監聽選取事件
 watch(selected, (newVla) => {
   store.dispatch("updateCount", newVla.length);
@@ -202,11 +215,25 @@ watch(ApiFilter, (newVla) => {
   justify-content: space-between;
   align-items: center;
   flex: 1;
+  .searchWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    .searchInputs {
+      flex: 1 1 80%;
+    }
+    .btn {
+      text-wrap: nowrap;
+      flex: 1 1 20%;
+    }
+  }
+
   @media (max-width: 640px) {
     flex-direction: column;
     justify-content: center;
     gap: 10px;
-    .searchInputs {
+    .searchWrap {
       width: 100%;
     }
   }
