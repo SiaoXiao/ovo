@@ -7,6 +7,7 @@
 
 ![This is the demo page](./preview.jpg)
 
+![This is the demo page](./preview_2.jpg)
 
 ## 📄 Description
 
