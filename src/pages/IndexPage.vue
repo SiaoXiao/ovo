@@ -100,6 +100,7 @@ const handleOpenDialog = (type) => {
 // 新增員工資料
 const handleAddMember = () => {
   state.rows.unshift(store.state.memberData);
+  store.dispatch("updateAdd", { state: false });
 };
 
 // 刪除

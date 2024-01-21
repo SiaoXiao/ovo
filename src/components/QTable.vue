@@ -79,16 +79,30 @@
       </q-td>
     </template>
 
+    <template v-slot:body-cell-gender="props">
+      <q-td :props="props">
+        <div v-ripple>
+          {{
+            props.row.gender === 1
+              ? "男"
+              : props.row.gender === 0
+              ? "女"
+              : props.row.gender
+          }}
+        </div>
+      </q-td>
+    </template>
+
     <!-- 資料狀態處理 -->
     <template v-slot:no-data="{ message, filter }">
-      <div class="full-width row justify-center items-center q-pa-xl">
+      <div class="full-width row justify-center items-center q-pa-xl 12345">
         <q-icon
           v-if="!loading"
           :name="filter ? 'search' : 'warning'"
           :color="filter ? 'secondary' : 'warning'"
           size="lg"
         ></q-icon>
-        <span class="text-caption q-ml-sm">{{ message }}</span>
+        <span class="noDataText q-ml-sm">{{ message }}</span>
       </div>
     </template>
 
@@ -256,5 +270,13 @@ watch(ApiFilter, (newVla) => {
 }
 .tableSelect {
   width: 150px;
+}
+
+.noDataText {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.025em;
+  font-weight: bold;
+  color: #9ca3af;
 }
 </style>

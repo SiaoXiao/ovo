@@ -43,9 +43,11 @@
             v-model="memberData.gender"
             :options="genderOptions"
             label="性別"
+            emit-value
+            map-options
             color="secondary"
             lazy-rules
-            :rules="memberData.rules"
+            :rules="[(val) => (val !== null && val !== '') || '請選擇性別']"
           ></q-select>
           <q-input
             v-model="memberData.birthday"
@@ -81,10 +83,20 @@ const memberData = reactive({
   birthday: "",
   rules: [(val) => (val && val.length > 0) || "請輸入資料"],
   numberRules: [
-    (val) => (val && val.length > 0 && /^\d+$/.test(val)) || "請輸入資料",
+    (val) =>
+      (val && val.length > 0 && /^09\d{8}$/.test(val)) || "請輸入手機號碼",
   ],
 });
-const genderOptions = reactive(["男", "女"]);
+const genderOptions = reactive([
+  {
+    label: "男",
+    value: 1,
+  },
+  {
+    label: "女",
+    value: 0,
+  },
+]);
 
 const newMemberData = computed(() => {
   const data = {
@@ -93,8 +105,8 @@ const newMemberData = computed(() => {
     email: memberData.email,
     gender: memberData.gender,
     birthday: `${memberData.birthday}T11:11:11.111Z`,
-  }
-  return data
+  };
+  return data;
 });
 
 const close = () => {
