@@ -21,38 +21,45 @@
     <template v-slot:top>
       <!-- fit row justify-between items-center -->
       <div class="tableSearchWrap">
-        <div class="text-h6 text-bold title">員工基本資訊</div>
-        <div class="searchWrap">
-          <div class="searchInputs">
-            <q-input
-              borderless
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="搜尋"
-            >
-              <template v-slot:append>
-                <q-icon name="search"></q-icon>
-              </template>
-            </q-input>
-            <q-input
-              borderless
-              dense
-              debounce="300"
-              v-model="ApiFilter"
-              placeholder="會員姓名搜尋"
-            >
-              <template v-slot:append>
-                <q-icon name="search"></q-icon>
-              </template>
-            </q-input>
-          </div>
-          <q-btn
-            class="primaryBtn btn"
-            label="清除"
-            @click="handelResetInput"
-          />
-        </div>
+        <q-input
+          borderless
+          dense
+          outlined
+          debounce="300"
+          v-model="filter"
+          placeholder="Search..."
+        >
+          <template v-slot:prepend>
+            <q-icon name="search"></q-icon>
+          </template>
+          <template v-slot:append>
+            <q-icon
+              name="close"
+              @click="filter = ''"
+              class="cursor-pointer"
+            ></q-icon>
+          </template>
+        </q-input>
+
+        <q-input
+          borderless
+          dense
+          outlined
+          debounce="300"
+          v-model="ApiFilter"
+          placeholder="API Search for name..."
+        >
+          <template v-slot:prepend>
+            <q-icon name="search"></q-icon>
+          </template>
+          <template v-slot:append>
+            <q-icon
+              name="close"
+              @click="ApiFilter = ''"
+              class="cursor-pointer"
+            ></q-icon>
+          </template>
+        </q-input>
       </div>
     </template>
 
@@ -107,38 +114,40 @@
           :disable="scope.isFirstPage"
           @click="scope.firstPage"
         ></q-btn>
-        <q-btn
-          icon="chevron_left"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isFirstPage"
-          @click="scope.prevPage"
-        ></q-btn>
-        <span>{{
-          `第 ${scope.pagination.page} 頁，共 ${scope.pagesNumber} 頁`
-        }}</span>
-        <q-btn
-          icon="chevron_right"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isLastPage"
-          @click="scope.nextPage"
-        ></q-btn>
-        <q-btn
-          v-if="scope.pagesNumber > 2"
-          icon="last_page"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isLastPage"
-          @click="scope.lastPage"
-        ></q-btn>
-        <div>{{ `共 ${rows.length} 幾筆資料` }}</div>
+        <div class="row wrap justify-center items-center">
+          <q-btn
+            icon="chevron_left"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isFirstPage"
+            @click="scope.prevPage"
+          ></q-btn>
+          <span>{{
+            `第 ${scope.pagination.page} 頁，共 ${scope.pagesNumber} 頁`
+          }}</span>
+          <q-btn
+            icon="chevron_right"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isLastPage"
+            @click="scope.nextPage"
+          ></q-btn>
+          <q-btn
+            v-if="scope.pagesNumber > 2"
+            icon="last_page"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isLastPage"
+            @click="scope.lastPage"
+          ></q-btn>
+          <div>{{ `共 ${rows.length} 幾筆資料` }}</div>
+        </div>
       </div>
     </template>
   </q-table>
@@ -185,11 +194,6 @@ const pagination = ref({
   rowsPerPage: 5,
 });
 
-const handelResetInput = () => {
-  filter.value = "";
-  ApiFilter.value = "";
-};
-
 // 監聽選取事件
 watch(selected, (newVla) => {
   store.dispatch("updateCount", newVla.length);
@@ -211,29 +215,18 @@ watch(ApiFilter, (newVla) => {
 
 <style lang="scss" scoped>
 .tableSearchWrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   flex: 1;
-  .searchWrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    .searchInputs {
-      flex: 1 1 80%;
-    }
-    .btn {
-      text-wrap: nowrap;
-      flex: 1 1 20%;
-    }
-  }
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 15px;
 
   @media (max-width: 640px) {
     flex-direction: column;
     justify-content: center;
     gap: 10px;
-    .searchWrap {
+    width: 100%;
+    :deep(.q-input) {
       width: 100%;
     }
   }

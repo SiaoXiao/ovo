@@ -1,10 +1,11 @@
 <template>
   <q-page class="row justify-left q-pa-lg">
     <div class="block-item">
-      <div class="row justify-end items-center">
-        <div class="TableOperate row no-wrap justify-start items-start">
-          <q-btn class="primaryBtn btn" label="新增" @click="handleOpenDialog('add')" />
-          <q-btn class="btn" label="刪除" @click="handleOpenDialog('remove')" />
+      <div class="row justify-between items-center">
+        <div class="text-h6 text-bold title">員工基本資訊</div>
+        <div class="TableOperate ">
+          <q-btn class="primaryBtn btn" label="Add" icon="add_circle_outline" @click="handleOpenDialog('add')" />
+          <q-btn class="btn" outline icon="delete" color="negative" label="Delete" @click="handleOpenDialog('remove')" />
         </div>
       </div>
       <QTable :columns="state.columns" :rows="state.rows" :loading="loading" @search="handleSearch" />
@@ -165,6 +166,9 @@ watch(
 }
 
 .TableOperate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 15px;
 }
 </style>

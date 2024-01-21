@@ -1,13 +1,36 @@
 .btn {
+  padding: 8px 16px;
+  width: 100%;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.025em;
+
+  .q-btn__content{
+    display: flex;
+    flex-wrap: nowrap;
+    i {
+      margin-right: 6px;
+    }
+    span {
+      text-wrap: nowrap;
+    }
+  }
+  @media (max-width: 640px) {
+    padding: 4px 8px;
+  }
+}
+
+.primaryBtn {
+  background: #1abb9c;
+  color: #fff;
+}
+
+.iconBtn {
   padding: 10px 30px;
   width: 100%;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.025em;
-}
-.primaryBtn {
-  background: #1abb9c;
-  color: #fff;
 }
 
 .fontBase{
